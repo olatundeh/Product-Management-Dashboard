@@ -1,4 +1,7 @@
 
+using Microsoft.EntityFrameworkCore;
+using Product_Management_Dashboard.Models;
+
 namespace Product_Management_Dashboard
 {
     public class Program
@@ -13,6 +16,9 @@ namespace Product_Management_Dashboard
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddDbContext<ProductDbContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("ProductDbContext")));
 
             var app = builder.Build();
 
