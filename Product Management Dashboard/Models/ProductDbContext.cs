@@ -8,6 +8,7 @@ namespace Product_Management_Dashboard.Models
         {
         }
         public DbSet<Product> Product { get; set; }
+        public object Products { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
