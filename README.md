@@ -169,4 +169,13 @@ To run the application, use the following command: dotnet run
 ## Contributing
 Contributions are welcome! Please fork the repository and submit a pull request.
 
+## Unit Testing
+
+### Setting Up Unit Tests
+Unit tests are written using the xUnit framework. The test project is located in the `ProductManagementDashboard.Tests` directory.
+
+### Running Unit Tests
+To run the unit tests, use the following command:
+dotnet test
+
     
