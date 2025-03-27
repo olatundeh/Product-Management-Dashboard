@@ -164,7 +164,6 @@ To run the application, use the following command: dotnet run
 - `Migrations/`: Contains the database migration files.
 - `Models/`: Contains the data models.
 - `Controllers/`: Contains the API controllers.
-- `Views/`: Contains the Razor views (if applicable).
 
 ## Contributing
 Contributions are welcome! Please fork the repository and submit a pull request.
