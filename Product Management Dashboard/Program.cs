@@ -20,6 +20,17 @@ namespace Product_Management_Dashboard
             builder.Services.AddDbContext<ProductDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("ProductDbContext")));
 
+            // Add CORS services
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowReactApp", builder =>
+                {
+                    builder.WithOrigins("http://localhost:3000") // Allow from your React app
+                           .AllowAnyHeader()
+                           .AllowAnyMethod();
+                });
+            });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -33,8 +44,12 @@ namespace Product_Management_Dashboard
 
             app.UseAuthorization();
 
-
+            // Use CORS middleware
+            app.UseCors("AllowReactApp");
             app.MapControllers();
+
+            // Configure Kestrel to listen on HTTPS
+            app.Urls.Add("https://localhost:7227");
 
             app.Run();
         }
