@@ -7,15 +7,8 @@ namespace Product_Management_Dashboard.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductController : ControllerBase
+    public class ProductController(ProductDbContext _productDbContext) : ControllerBase
     {
-        private readonly ProductDbContext _productDbContext;
-
-        public ProductController(ProductDbContext productDbContext)
-        {
-            _productDbContext = productDbContext;
-        }
-
         [HttpGet]
         [Route("GetAllProducts")]
         public async Task<IEnumerable<Product>> GetAllProducts()
@@ -34,7 +27,7 @@ namespace Product_Management_Dashboard.Controllers
         }
 
         [HttpPatch]
-        [Route("UpdateProduct/{id}")]
+        [Route("UpdateProduct")]
         public async Task<Product> UpdateProduct(Product product)
         {
             _productDbContext.Entry(product).State = EntityState.Modified;
