@@ -5,16 +5,28 @@ using Xunit;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Product_Management_Dashboard_Test
 {
     public class ProductControllerTests
     {
-        private static DbContextOptions<ProductDbContext> CreateInMemoryOptions()
+        private static ProductDbContext CreateContext()
         {
-            return new DbContextOptionsBuilder<ProductDbContext>()
+            var serviceProvider = new ServiceCollection()
+                .AddEntityFrameworkInMemoryDatabase()
+                .AddDbContext<ProductDbContext>(options =>
+                    options.UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()))
+                .BuildServiceProvider();
+
+            var options = new DbContextOptionsBuilder<ProductDbContext>()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .UseInternalServiceProvider(serviceProvider)
                 .Options;
+
+            var context = new ProductDbContext(options);
+            context.Database.EnsureCreated();
+            return context;
         }
 
         private static void SeedDatabase(ProductDbContext context)
@@ -29,8 +41,7 @@ namespace Product_Management_Dashboard_Test
         [Fact]
         public async Task GetAllProducts_ReturnsAllProducts()
         {
-            var options = CreateInMemoryOptions();
-            using var context = new ProductDbContext(options);
+            using var context = CreateContext();
             {
                 SeedDatabase(context);
                 var controller = new ProductController(context);
@@ -44,8 +55,7 @@ namespace Product_Management_Dashboard_Test
         [Fact]
         public async Task AddProduct_AddsNewProduct()
         {
-            var options = CreateInMemoryOptions();
-            using var context = new ProductDbContext(options);
+            using var context = CreateContext();
             {
                 SeedDatabase(context);
                 var controller = new ProductController(context);
@@ -61,11 +71,18 @@ namespace Product_Management_Dashboard_Test
         [Fact]
         public async Task UpdateProduct_UpdatesExistingProduct()
         {
-            var options = CreateInMemoryOptions();
-            using var context = new ProductDbContext(options);
+            using var context = CreateContext();
             {
                 SeedDatabase(context);
                 var controller = new ProductController(context);
+
+                // Detach the existing entity
+                var existingProduct = await context.Product.FindAsync(1);
+                if (existingProduct != null)
+                {
+                    context.Entry(existingProduct).State = EntityState.Detached;
+                }
+
                 var updatedProduct = new Product { Id = 1, ProductName = "Updated Product", ProductCode = "UP1", Price = 40.0f, Quantity = 20, Category = "Updated", CreatedAt = DateTime.Now };
                 var result = await controller.UpdateProduct(updatedProduct);
 
@@ -80,8 +97,7 @@ namespace Product_Management_Dashboard_Test
         [Fact]
         public void DeleteProduct_DeletesExistingProduct()
         {
-            var options = CreateInMemoryOptions();
-            using var context = new ProductDbContext(options);
+            using var context = CreateContext();
             {
                 SeedDatabase(context);
                 var controller = new ProductController(context);
@@ -96,8 +112,7 @@ namespace Product_Management_Dashboard_Test
         [Fact]
         public void DeleteProduct_ReturnsFalseWhenProductNotFound()
         {
-            var options = CreateInMemoryOptions();
-            using var context = new ProductDbContext(options);
+            using var context = CreateContext();
             {
                 SeedDatabase(context);
                 var controller = new ProductController(context);
