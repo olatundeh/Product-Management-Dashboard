@@ -101,10 +101,10 @@ This is an ASP.NET Core Web API for managing products. It provides endpoints for
         }
         ```
 
-* **`PATCH /api/Product/UpdateProduct/{id}`**
+* **`PATCH /api/Product/UpdateProduct`**
     * Updates an existing product.
     * `{id}`: The ID of the product to update.
-    * Request Body: A `Product` object with the updated fields.
+    * Request Body: A Product object with the updated fields, including the 'id' of the product to update.
     * Response: The updated `Product` object.
     * Example Request Body:
         ```json
